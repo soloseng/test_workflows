@@ -24,7 +24,7 @@ jobs:
         target_branch: main
 
 
-  -name:  New commits found
+    - name:  New commits found
       if: ${{ steps.sync.outputs.has_new_commits == 'true' }}
       run: echo "New commits were found to sync."
 
