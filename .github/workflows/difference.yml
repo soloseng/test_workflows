@@ -1,0 +1,37 @@
+name: Check new upstream commits
+
+on:
+  schedule:
+     - cron: '0 7 * * 1,4,6'
+     - cron: '10 * * * *'
+     #scheduled for 07:00 on monday and thursday.
+
+jobs:
+  check_upstream_commits:
+    runs-on: ubuntu-latest
+    name: Check upstream latest commits
+
+    steps:
+    - name: Checkout main
+      uses: actions/checkout@v2
+
+    - name: Fetch upstream changes
+      id: sync
+      uses: ivanmilov/upstream_check_new_commits@v1
+      with:
+        upstream_repository: NomicFoundation/hardhat
+        upstream_branch: master
+        target_branch: main
+
+
+  -name:  New commits found
+      if: steps.sync.outputs.has_new_commits == 'true'
+      run: echo "New commits were found to sync."
+
+    # - name: Notify if new commits
+    #   if: ${{ steps.sync.outputs.has_new_commits == 'true' }}
+    #   uses: ivanmilov/telegram_notify_action@v1
+    #   with:
+    #     api_key: ${{secrets.TELEGRAM_API_KEY}}
+    #     chat_id: ${{secrets.TELEGRAM_CHAT_ID}}
+    #     message: "New commit in upstream repo ${{github.repository}}"
